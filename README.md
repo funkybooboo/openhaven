@@ -14,13 +14,55 @@ Without OpenHaven, you'd need to manually configure dozens of services, manage D
 
 ## Why OpenHaven?
 
-**Convention Over Configuration** - Like Ruby on Rails for cloud infrastructure. Opinionated defaults get you running fast, but nothing is locked if you want to customize.
+**Multi-Cloud Cost Optimization** - OpenHaven automatically uses the cheapest and best provider for each service. Instead of locking you into one expensive VPS or SaaS platform, it intelligently distributes services across providers to minimize costs while maximizing performance.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Your Personal Cloud                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Compute Layer              Storage Layer                   │
+│  ┌──────────────────┐       ┌──────────────────┐           │
+│  │ • Email          │──────▶│ • Files          │           │
+│  │ • Passwords      │       │ • Backups        │           │
+│  │ • Git            │       │ • Attachments    │           │
+│  │ • AI             │       └──────────────────┘           │
+│  │ • Calendar       │                                       │
+│  └──────────────────┘       DNS Layer                      │
+│                              ┌──────────────────┐           │
+│                              │ • Automation     │           │
+│                              │ • SSL Certs      │           │
+│                              └──────────────────┘           │
+│                                                              │
+│  Each layer uses the cheapest, best provider available      │
+│  Total: $5-10/month  |  SaaS Equivalent: $40-50/month      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Convention Over Configuration** - Like Ruby on Rails for cloud infrastructure. Opinionated defaults automatically select the lowest-cost providers and best open-source software. Nothing is locked - customize anything.
 
 **True Sovereignty** - You own the cloud accounts. You own the data. You control the billing. OpenHaven is just a convenience layer you can remove anytime.
 
 **Zero Vendor Lock-In** - Everything is open source. All infrastructure is exportable as Terraform. No proprietary APIs or SaaS dependencies.
 
-**Multi-Cloud by Design** - Use the best and cheapest provider for each service. S3 for storage, Cloud Run for compute, Cloudflare for DNS - or swap any of them.
+## Cost Comparison
+
+| What You Get | SaaS Approach | OpenHaven |
+|--------------|---------------|-----------|
+| Email + Calendar | $5-10/month | Included |
+| File Storage (100GB) | $2-5/month | ~$0.50/month |
+| Password Manager | $1-3/month | Included |
+| Git Hosting | $4-7/month | Included |
+| VPN | $5-10/month | Included |
+| AI Chat | $20/month | Included |
+| Office Suite | $7-10/month | Included |
+| **Total** | **$44-65/month** | **$5-10/month** |
+
+**Savings: 75-85% ($400-600/year)**
+
+Plus you own everything - no vendor lock-in, no data mining, full control.
+
+See [Stack Decisions](./plans/specs/stack-decisions.md) for detailed provider and software choices.
 
 ## Current Status
 
