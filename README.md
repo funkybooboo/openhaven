@@ -1,6 +1,6 @@
 # OpenHaven
 
-> Deploy your personal cloud in minutes, own it forever.
+> Deploy your personal cloud in minutes, own it forever. Email, files, passwords, git, AI - all on infrastructure you control. 
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 
