@@ -1,28 +1,46 @@
-# Project Name
+# OpenHaven
 
-> One sentence: what this project does and who it's for.
+> Deploy your personal cloud in minutes, own it forever.
 
-[![CI](https://github.com/username/project-name/actions/workflows/ci.yml/badge.svg)](https://github.com/username/project-name/actions/workflows/ci.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 
 ---
 
 ## What Is It?
 
-<!-- 2-4 sentences. What problem does this solve? Who is it for?
-     What would someone have to do without it? -->
+OpenHaven is a convention-driven cloud orchestrator that makes self-hosting as simple as using SaaS. Choose your domain, connect your cloud accounts, and deploy a complete personal cloud with email, file storage, password management, git hosting, and more - all running on infrastructure you own and control.
+
+Without OpenHaven, you'd need to manually configure dozens of services, manage DNS records, set up SSL certificates, handle backups, and maintain complex infrastructure. OpenHaven automates all of this with opinionated defaults while keeping you in full control.
+
+## Why OpenHaven?
+
+**Convention Over Configuration** - Like Ruby on Rails for cloud infrastructure. Opinionated defaults get you running fast, but nothing is locked if you want to customize.
+
+**True Sovereignty** - You own the cloud accounts. You own the data. You control the billing. OpenHaven is just a convenience layer you can remove anytime.
+
+**Zero Vendor Lock-In** - Everything is open source. All infrastructure is exportable as Terraform. No proprietary APIs or SaaS dependencies.
+
+**Multi-Cloud by Design** - Use the best and cheapest provider for each service. S3 for storage, Cloud Run for compute, Cloudflare for DNS - or swap any of them.
+
+## Current Status
+
+**v0.1.0 - Documentation Phase** (In Progress)
+
+OpenHaven is in early development. We're currently establishing the vision, architecture, and roadmap. See [Roadmap](./plans/roadmap.md) for details.
 
 ## Getting Started
 
+OpenHaven is not yet ready for deployment. To contribute to the vision and planning:
+
 ```bash
-git clone https://github.com/username/project-name.git
-cd project-name
-task setup
-cp .env.example .env
-task dev
+git clone https://github.com/funkybooboo/openhaven.git
+cd openhaven
+# Read the documentation
+cat docs/01-introduction.md
+cat plans/roadmap.md
 ```
 
-See [Getting Started](./docs/02-getting-started.md) for full setup, configuration, and available commands.
+See [Contributing](./CONTRIBUTING.md) to get involved in shaping OpenHaven.
 
 ## Documentation
 

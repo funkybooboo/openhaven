@@ -1,106 +1,359 @@
 # Architecture
 
-This document covers how to think about structuring a project -- the principles that lead to code that is easy to test, change, and understand. These ideas apply regardless of language, framework, or project type.
+This document describes OpenHaven's system architecture, deployment model, and core components.
 
 ---
 
-## The Core Principle: Separate What from How
+## System Overview
 
-The most important architectural decision you will make is where to draw the line between **core logic** and **infrastructure**.
-
-- **Core logic** is *what* your program does -- the rules, decisions, and transformations that make it valuable.
-- **Infrastructure** is *how* it does it -- files, networks, databases, terminals, hardware, external services.
-
-Core logic should not know about infrastructure. Infrastructure should be swappable without touching core logic.
-
----
-
-## Ports and Adapters
-
-One proven way to enforce this separation: define **ports** (interfaces that describe what your core needs) and implement **adapters** (concrete implementations that satisfy those interfaces).
+OpenHaven is a **cloud orchestration platform** that automates the deployment and management of self-hosted services across user-owned cloud infrastructure.
 
 ```
-+----------------------------------------------+
-|                                              |
-|              Core Logic                      |
-|       (rules, decisions, transforms)         |
-|                                              |
-|   depends on v interfaces, not details       |
-|                                              |
-|--------------+-------------------------------+
-|   Storage    |   Logger   |   Clock   | ...  |  <- Ports (interfaces)
-|--------------+-------------------------------+
-|  Postgres  InMemory  File  Console  System   |  <- Adapters (implementations)
-+----------------------------------------------+
++------------------+
+|   User's Cloud   |
+|    Accounts      |
+|  (AWS, GCP, etc) |
++--------+---------+
+         |
+         | Delegated IAM
+         | Permissions
+         v
++------------------+       +-------------------+
+|   OpenHaven      |       |   User Clients    |
+|  Control Plane   +------>|  (Web/Desktop/    |
+|                  |       |   Mobile Apps)    |
+| - Provisioning   |       +-------------------+
+| - Orchestration  |
+| - Monitoring     |
++--------+---------+
+         |
+         | Deploys & Manages
+         v
++------------------+
+|  Service Stack   |
+|                  |
+| - Keycloak (SSO) |
+| - Nextcloud      |
+| - Vaultwarden    |
+| - Gitea          |
+| - Mailcow        |
+| - WireGuard      |
+| - Ollama + AI    |
++------------------+
 ```
 
-**A port** is an interface -- a contract that describes a capability your core needs, without specifying how it's provided.
+---
 
-**An adapter** is a concrete implementation of a port. You can have multiple adapters for the same port:
+## Core Principles
 
-| Port | Production adapter | Test adapter |
-|------|--------------------|--------------|
-| Storage | Database | In-memory map |
-| Logger | Structured JSON | Silent / recording |
-| Clock | System time | Fixed / controllable |
-| Config | Environment vars | Hardcoded map |
-| Notifier | Email / SMS | Recording (captures calls) |
+### 1. User-Owned Infrastructure
 
-This pattern is sometimes called Hexagonal Architecture or Clean Architecture. The name doesn't matter. The idea does: **keep your core logic independent of the outside world.**
+**Users own the cloud accounts, not OpenHaven.**
+
+- Users create AWS, GCP, or other cloud provider accounts
+- Users grant OpenHaven limited IAM permissions via delegation
+- OpenHaven provisions infrastructure in user accounts
+- Users control billing and can revoke access anytime
+- If OpenHaven disappears, user infrastructure continues running
+
+This is the foundational architectural decision. See [ADR-001](../plans/decisions/ADR-001-user-owned-infrastructure.md).
+
+### 2. Infrastructure as Code
+
+Everything OpenHaven deploys is generated as:
+
+- **Terraform** - Cloud resource provisioning
+- **Docker Compose** - Service orchestration
+- **YAML configs** - Service configuration
+
+All generated code is:
+- Human-readable
+- Version-controlled
+- Exportable
+- Modifiable
+- Forkable
+
+Users can inspect, customize, or take over manual management at any time.
+
+### 3. Multi-Cloud by Design
+
+OpenHaven doesn't lock you to a single VPS or cloud provider. Instead, it uses the best provider for each service:
+
+- **Object Storage** - AWS S3, Backblaze B2, Cloudflare R2
+- **Compute** - GCP Cloud Run, AWS EC2, Hetzner Cloud
+- **DNS** - Cloudflare (automated)
+- **Email Relay** - Optional (self-hosted by default)
+
+This separation of concerns is more cost-effective and resilient.
+
+### 4. Zero SaaS Dependencies
+
+OpenHaven uses only:
+- Raw cloud infrastructure (compute, storage, networking)
+- Open source software
+- Self-hosted services
+
+No proprietary SaaS APIs. No vendor lock-in. See [ADR-002](../plans/decisions/ADR-002-no-saas-dependencies.md).
 
 ---
 
-## Dependency Injection
+## Deployment Model
 
-Adapters need to be wired together somewhere. Do it in one place -- a composition root, a container, or your `main` entry point.
+### Phase 1: Single VM (v0.2.0 - v0.4.0)
+
+Initial deployment model for simplicity:
 
 ```
-main / container
-  |-- creates Config  (reads from environment)
-  |-- creates Logger  (uses Config for log level)
-  |-- creates Storage (uses Config for connection string)
-  `-- creates App     (receives Storage, Logger -- knows nothing about how they work)
++------------------------+
+|   User's Cloud VM      |
+|  (Hetzner/DO/GCP)      |
+|                        |
+|  +------------------+  |
+|  | Docker Compose   |  |
+|  |                  |  |
+|  | - Traefik        |  |
+|  | - Keycloak       |  |
+|  | - Vaultwarden    |  |
+|  | - Gitea          |  |
+|  | - Nextcloud      |  |
+|  | - Mailcow        |  |
+|  +------------------+  |
++------------------------+
+         |
+         v
++------------------------+
+|   S3 Storage           |
+|  (AWS/Backblaze/R2)    |
+|                        |
+|  - Nextcloud files     |
+|  - Gitea repos         |
+|  - Backups             |
++------------------------+
 ```
 
-**Rules:**
-- Construct dependencies once, at startup
-- Pass them in -- don't reach out and grab them from globals
-- The composition root is the only place that knows which concrete adapter is used
+**Characteristics:**
+- Single VM for all services
+- Docker Compose orchestration
+- Traefik reverse proxy with automatic SSL
+- S3-compatible object storage for data
+- Automated DNS via Cloudflare API
+- Automated backups to S3
+
+### Phase 2: Multi-Cloud (v1.0.0+)
+
+Future deployment model for scale and cost optimization:
+
+```
++------------------+     +------------------+     +------------------+
+|  Compute Layer   |     |  Storage Layer   |     |   DNS Layer      |
+|  (GCP Cloud Run) |     |  (AWS S3)        |     |  (Cloudflare)    |
+|                  |     |                  |     |                  |
+| - Vaultwarden    |     | - Files          |     | - Automated      |
+| - Gitea          |     | - Backups        |     | - SSL certs      |
+| - Open WebUI     |     | - Git objects    |     | - Records        |
++------------------+     +------------------+     +------------------+
+```
 
 ---
 
-## 12-Factor Principles
+## Core Components
 
-Regardless of project type, these principles lead to software that is portable, maintainable, and honest:
+### 1. Control Plane
 
-1. **Config in the environment** -- no hardcoded values; read from env vars, flags, or config files; never commit secrets
-2. **Explicit dependencies** -- declare everything; don't rely on ambient globals or system-installed tools
-3. **Stateless processes** -- don't store state in memory between invocations; state belongs in storage
-4. **Logs to stdout** -- write log output as a stream of events; let the environment handle routing
-5. **One codebase, many environments** -- the same code runs in dev, test, and production; only config changes
+The OpenHaven control plane is responsible for:
 
-See [12factor.net](https://12factor.net/) for the full list.
+- **Provisioning** - Creating cloud resources via Terraform
+- **Orchestration** - Deploying services via Docker Compose
+- **Configuration** - Generating service configs
+- **Monitoring** - Health checks and status reporting
+- **Updates** - Managing service updates
+
+**Deployment Options:**
+- **Hosted** (SaaS) - OpenHaven-managed control plane (future)
+- **Self-hosted** - Run control plane yourself
+
+### 2. Provisioning Engine
+
+Uses Terraform to provision:
+- Cloud VMs
+- S3 buckets
+- DNS records
+- SSL certificates
+- Networking/firewall rules
+- IAM roles and policies
+
+**Key Features:**
+- Idempotent operations
+- State management
+- Drift detection
+- Multi-provider support
+
+### 3. Service Stack
+
+Opinionated selection of best-in-class open source services:
+
+| Service | Purpose | Default Choice | Alternatives |
+|---------|---------|----------------|--------------|
+| Identity/SSO | Authentication | Keycloak | Authelia, Dex |
+| Files/Calendar | Storage/Sync | Nextcloud | ownCloud, SeaFile |
+| Email | Mail server | Mailcow | iRedMail, Modoboa |
+| Passwords | Password manager | Vaultwarden | - |
+| Git | Git hosting | Gitea | GitLab |
+| Office | Document editing | OnlyOffice | Collabora |
+| VPN | Private network | WireGuard | Tailscale |
+| AI | LLM hosting | Ollama + Open WebUI | - |
+
+See [Stack Decisions](../plans/specs/stack-decisions.md) for detailed rationale.
+
+### 4. Client Applications
+
+Unified interface for accessing services:
+
+- **Web App** - Dashboard, file explorer, mail viewer, AI chat
+- **Desktop App** (Tauri) - Native integration, sync status, notifications
+- **Mobile App** (React Native/Flutter) - Mobile access to all services
+
+All clients authenticate via Keycloak SSO.
 
 ---
 
-## Architecture Decision Records
+## Data Flow
 
-When you make a significant architectural decision, document it. Future contributors -- including yourself -- will want to know why things are the way they are.
+### Authentication Flow
 
-ADRs live in [`plans/decisions/`](../plans/decisions/). See the [README there](../plans/decisions/README.md) for the template and naming convention.
+```
+1. User -> Web/Desktop/Mobile App
+2. App -> Keycloak (SSO login)
+3. Keycloak -> OAuth/OIDC token
+4. App -> Services (with token)
+5. Services -> Keycloak (validate token)
+```
 
-Write an ADR when:
-- Choosing between two non-obvious approaches
-- Making a decision that will be hard to reverse
-- Adopting or rejecting a technology, library, or pattern
-- Establishing a convention others will follow
+All services integrate with Keycloak for centralized authentication.
+
+### File Storage Flow
+
+```
+1. User -> Nextcloud (upload file)
+2. Nextcloud -> S3 (store object)
+3. S3 -> Versioning + Lifecycle rules
+4. Backup job -> S3 (snapshot)
+```
+
+Files never stored on VM disk - always in S3.
+
+### Email Flow
+
+```
+Inbound:
+1. External -> Mailcow (SMTP)
+2. Mailcow -> Spam filter (Rspamd)
+3. Mailcow -> User mailbox (Dovecot)
+
+Outbound:
+1. User -> Mailcow (SMTP)
+2. Mailcow -> DKIM signing
+3. Mailcow -> External (direct or relay)
+```
 
 ---
 
-## What to Avoid
+## Security Model
 
-- **God objects** -- one class or module that knows everything and does everything
-- **Hidden dependencies** -- global state, singletons grabbed without injection
-- **Infrastructure in core logic** -- importing a database driver inside a business rule
-- **Premature abstraction** -- don't create interfaces for things that will never have a second implementation
-- **Inheritance for code reuse** -- prefer composition; inheritance couples you to the parent's internals
+### Principle of Least Privilege
+
+- OpenHaven requests minimal IAM permissions
+- Services run with minimal privileges
+- Network isolation between services
+- Secrets stored encrypted
+
+### Secrets Management
+
+- User credentials never stored by OpenHaven
+- Service secrets generated automatically
+- Encrypted at rest in user's infrastructure
+- Rotatable without downtime
+
+### Network Security
+
+- All external traffic via HTTPS (Traefik + Let's Encrypt)
+- Internal service communication via Docker network
+- Firewall rules limit exposed ports
+- VPN for administrative access
+
+---
+
+## Scalability Considerations
+
+### v0.x - v1.0 (Single VM)
+
+**Limits:**
+- ~10-50 users
+- ~1TB storage (via S3)
+- Single region
+- Vertical scaling only
+
+**When to scale:**
+- CPU/memory exhaustion
+- Need for geographic distribution
+- Regulatory requirements
+
+### v2.0+ (Multi-Cloud)
+
+**Capabilities:**
+- Horizontal scaling
+- Multi-region deployment
+- Service-specific scaling
+- Cost optimization per service
+
+---
+
+## Technology Stack
+
+### Infrastructure
+- **Terraform** - Cloud provisioning
+- **Docker** - Containerization
+- **Docker Compose** - Orchestration (v0.x)
+- **Traefik** - Reverse proxy + SSL
+
+### Control Plane (Future)
+- **Language** - TBD (Go, Rust, or TypeScript)
+- **API** - REST or GraphQL
+- **Database** - PostgreSQL
+- **Queue** - Redis or similar
+
+### Client Apps (Future)
+- **Web** - React or Svelte
+- **Desktop** - Tauri
+- **Mobile** - React Native or Flutter
+
+---
+
+## What This Architecture Enables
+
+1. **User Sovereignty** - Users own everything
+2. **Removability** - OpenHaven can be removed without data loss
+3. **Transparency** - All infrastructure is visible and exportable
+4. **Flexibility** - Services can be swapped or customized
+5. **Cost Optimization** - Use cheapest provider for each service
+6. **Resilience** - Multi-cloud reduces single points of failure
+
+---
+
+## What This Architecture Prevents
+
+1. **Vendor Lock-In** - No proprietary formats or APIs
+2. **Data Silos** - All data in user-controlled infrastructure
+3. **Hidden Costs** - Users see actual cloud costs
+4. **Black Boxes** - All configuration is readable
+5. **Forced Upgrades** - Users control update timing
+
+---
+
+## Related Documentation
+
+- [Stack Decisions](../plans/specs/stack-decisions.md) - Technology choices and rationale
+- [ADR-001: User-Owned Infrastructure](../plans/decisions/ADR-001-user-owned-infrastructure.md)
+- [ADR-002: No SaaS Dependencies](../plans/decisions/ADR-002-no-saas-dependencies.md)
+- [Onboarding Flow](../plans/specs/onboarding-flow.md) - User experience design
+- [Roadmap](../plans/roadmap.md) - Implementation timeline
