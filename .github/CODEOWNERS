@@ -1,0 +1,33 @@
+# CODEOWNERS
+#
+# Defines who is automatically requested for review when a pull request
+# touches specific files or directories.
+#
+# Rules are matched top-to-bottom; the last matching rule wins.
+# Patterns follow the same syntax as .gitignore.
+#
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# ----------------------------------------------------------------------------
+# Setup
+# ----------------------------------------------------------------------------
+# 1. Replace @username with real GitHub usernames or @org/team-slug values.
+# 2. Uncomment the rules you want to enforce.
+# 3. CODEOWNERS only takes effect when branch protection requires code owner
+#    review. Enable that in: Settings -> Branches -> Require review from
+#    Code Owners.
+# ----------------------------------------------------------------------------
+
+# Default owner for everything not matched below.
+# * @username
+
+# CI / build system -- changes here affect everyone.
+# .github/                  @username
+# Taskfile.yml              @username
+
+# Documentation -- anyone can review, but flag to a docs owner.
+# docs/                     @username
+
+# Security-sensitive files -- require explicit sign-off.
+# SECURITY.md               @username
+# .github/workflows/        @username

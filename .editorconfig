@@ -1,0 +1,70 @@
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Web languages (JavaScript, TypeScript, JSON, HTML, CSS)
+[*.{ts,tsx,js,jsx,json,html,css,scss,sass,less}]
+indent_size = 2
+
+# YAML
+[*.{yml,yaml}]
+indent_size = 2
+
+# Python
+[*.py]
+indent_size = 4
+
+# Ruby
+[*.rb]
+indent_size = 2
+
+# PHP
+[*.php]
+indent_size = 4
+
+# Go
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Rust
+[*.rs]
+indent_size = 4
+
+# C/C++
+[*.{c,cpp,h,hpp}]
+indent_size = 4
+
+# C#
+[*.cs]
+indent_size = 4
+
+# Java
+[*.java]
+indent_size = 4
+
+# Shell scripts
+[*.{sh,bash}]
+indent_size = 2
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab
+
+[*.{mk,make}]
+indent_style = tab
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+
+# Configuration files
+[*.{toml,ini,cfg}]
+indent_size = 2

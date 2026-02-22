@@ -1,0 +1,403 @@
+# ==============================================================================
+# Taskfile - Language-Agnostic Task Runner
+#
+# This Taskfile provides common development tasks for any project.
+# Uncomment and customize sections based on your project's language/stack.
+#
+# Installation: https://taskfile.dev/installation
+# Documentation: https://taskfile.dev
+# ==============================================================================
+
+version: '3'
+
+# ==============================================================================
+# Variables
+# ==============================================================================
+vars:
+  PROJECT_NAME: my-project
+  # Add project-specific variables here
+
+# ==============================================================================
+# Default Task
+# ==============================================================================
+tasks:
+  default:
+    desc: Show all available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  # ============================================================================
+  # Setup & Installation
+  # ============================================================================
+  setup:
+    desc: Setup development environment (install dependencies)
+    cmds:
+      - echo "Installing dependencies..."
+      # Uncomment based on your stack:
+      # - npm install               # Node.js
+      # - pip install -r requirements.txt  # Python
+      # - cargo build               # Rust
+      # - go mod download           # Go
+      # - bundle install            # Ruby
+      # - composer install          # PHP
+      - echo "[OK] Dependencies installed"
+
+  clean:
+    desc: Clean build artifacts and caches
+    cmds:
+      - echo "Cleaning build artifacts..."
+      # Uncomment based on your stack:
+      # - rm -rf node_modules dist build .next  # Node.js
+      # - rm -rf __pycache__ *.pyc .pytest_cache  # Python
+      # - cargo clean               # Rust
+      # - go clean                  # Go
+      # - rm -rf vendor             # Ruby/PHP
+      - echo "[OK] Cleaned"
+
+  # ============================================================================
+  # Development
+  # ============================================================================
+  dev:
+    desc: Start development server with hot reload
+    cmds:
+      - echo "Starting development server..."
+      # Uncomment based on your stack:
+      # - npm run dev               # Node.js
+      # - python manage.py runserver  # Django
+      # - flask run                 # Flask
+      # - cargo watch -x run        # Rust
+      # - go run main.go            # Go
+      # - rails server              # Ruby on Rails
+      # - php artisan serve         # Laravel
+
+  build:
+    desc: Build the project for production
+    cmds:
+      - echo "Building project..."
+      # Uncomment based on your stack:
+      # - npm run build             # Node.js
+      # - python setup.py build     # Python
+      # - cargo build --release     # Rust
+      # - go build -o bin/app       # Go
+      # - gem build *.gemspec       # Ruby
+      # - composer build            # PHP
+      - echo "[OK] Build complete"
+
+  run:
+    desc: Run the application
+    cmds:
+      # Uncomment based on your stack:
+      # - npm start                 # Node.js
+      # - python main.py            # Python
+      # - cargo run                 # Rust
+      # - go run .                  # Go
+      # - ruby main.rb              # Ruby
+      # - php index.php             # PHP
+      - echo "Add 'run' command for your project"
+
+  # ============================================================================
+  # Testing
+  # ============================================================================
+  test:
+    desc: Run all tests
+    cmds:
+      - echo "Running tests..."
+      # Uncomment based on your stack:
+      # - npm test                  # Node.js
+      # - pytest                    # Python
+      # - cargo test                # Rust
+      # - go test ./...             # Go
+      # - bundle exec rspec         # Ruby
+      # - phpunit                   # PHP
+      - echo "[OK] Tests passed"
+
+  test:watch:
+    desc: Run tests in watch mode
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run test:watch        # Node.js
+      # - pytest-watch              # Python
+      # - cargo watch -x test       # Rust
+      # - go test ./... -watch      # Go (with external tool)
+      - echo "Add 'test:watch' command for your project"
+
+  test:coverage:
+    desc: Run tests with coverage report
+    cmds:
+      - echo "Running tests with coverage..."
+      # Uncomment based on your stack:
+      # - npm run test:coverage     # Node.js
+      # - pytest --cov              # Python
+      # - cargo tarpaulin           # Rust
+      # - go test -cover ./...      # Go
+      # - bundle exec rspec --coverage  # Ruby
+      - echo "[OK] Coverage report generated"
+
+  test:e2e:
+    desc: Run end-to-end tests
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run test:e2e          # Node.js (Playwright, Cypress)
+      # - pytest tests/e2e          # Python
+      # - cargo test --test e2e     # Rust
+      - echo "Add 'test:e2e' command for your project"
+
+  # ============================================================================
+  # Code Quality
+  # ============================================================================
+  format:
+    desc: Format code automatically
+    cmds:
+      - echo "Formatting code..."
+      # Uncomment based on your stack:
+      # - npm run format            # Node.js (Prettier, Biome)
+      # - black .                   # Python
+      # - cargo fmt                 # Rust
+      # - go fmt ./...              # Go
+      # - rubocop -a                # Ruby
+      # - php-cs-fixer fix          # PHP
+      - echo "[OK] Code formatted"
+
+  format:check:
+    desc: Check if code is properly formatted
+    cmds:
+      - echo "Checking code format..."
+      # Uncomment based on your stack:
+      # - npm run format:check      # Node.js
+      # - black --check .           # Python
+      # - cargo fmt -- --check      # Rust
+      # - go fmt -l ./...           # Go
+      # - rubocop                   # Ruby
+      - echo "[OK] Format check passed"
+
+  lint:
+    desc: Run linter
+    cmds:
+      - echo "Running linter..."
+      # Uncomment based on your stack:
+      # - npm run lint              # Node.js (ESLint, Biome)
+      # - flake8 .                  # Python
+      # - cargo clippy -- -D warnings  # Rust
+      # - golangci-lint run         # Go
+      # - rubocop                   # Ruby
+      # - phpstan analyse           # PHP
+      - echo "[OK] Linting passed"
+
+  lint:fix:
+    desc: Run linter and auto-fix issues
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run lint:fix          # Node.js
+      # - autopep8 --in-place --recursive .  # Python
+      # - cargo clippy --fix        # Rust
+      # - golangci-lint run --fix   # Go
+      - echo "Add 'lint:fix' command for your project"
+
+  type-check:
+    desc: Run type checker
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run type-check        # Node.js (TypeScript)
+      # - mypy .                    # Python
+      # - cargo check               # Rust
+      # - go vet ./...              # Go
+      - echo "Add 'type-check' command for your project"
+
+  check:
+    desc: Run all code quality checks (format, lint, type-check)
+    cmds:
+      - task format:check
+      - task lint
+      - task type-check
+      - echo "[OK] All quality checks passed"
+
+  # ============================================================================
+  # Validation (CI)
+  # ============================================================================
+  validate:
+    desc: Run all validation checks (format, lint, type-check, test, build)
+    cmds:
+      - echo "Running full validation..."
+      - task format:check
+      - task lint
+      - task type-check
+      - task test
+      - task build
+      - echo "[OK] All validation checks passed"
+
+  ci:
+    desc: Run CI pipeline (alias for validate)
+    cmds:
+      - task validate
+
+  # ============================================================================
+  # Documentation
+  # ============================================================================
+  docs:
+    desc: Generate and view documentation
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run docs              # Node.js (TypeDoc, JSDoc)
+      # - mkdocs serve              # Python (MkDocs)
+      # - cargo doc --open          # Rust
+      # - godoc -http=:6060         # Go
+      - echo "Add 'docs' command for your project"
+
+  docs:build:
+    desc: Build documentation for deployment
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run docs:build        # Node.js
+      # - mkdocs build              # Python
+      # - cargo doc                 # Rust
+      - echo "Add 'docs:build' command for your project"
+
+  # ============================================================================
+  # Database (if applicable)
+  # ============================================================================
+  db:migrate:
+    desc: Run database migrations
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run migrate           # Node.js (Prisma, Drizzle)
+      # - python manage.py migrate  # Django
+      # - flask db upgrade          # Flask
+      # - rails db:migrate          # Ruby on Rails
+      # - php artisan migrate       # Laravel
+      - echo "Add 'db:migrate' command for your project"
+
+  db:seed:
+    desc: Seed database with sample data
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run db:seed           # Node.js
+      # - python manage.py loaddata fixtures/*.json  # Django
+      # - rails db:seed             # Ruby on Rails
+      - echo "Add 'db:seed' command for your project"
+
+  db:reset:
+    desc: Reset database (drop, create, migrate, seed)
+    cmds:
+      # Uncomment based on your stack:
+      # - npm run db:reset          # Node.js
+      # - python manage.py flush && python manage.py migrate  # Django
+      # - rails db:reset            # Ruby on Rails
+      - echo "Add 'db:reset' command for your project"
+
+  # ============================================================================
+  # Dependencies
+  # ============================================================================
+  deps:update:
+    desc: Update dependencies to latest versions
+    cmds:
+      - echo "Updating dependencies..."
+      # Uncomment based on your stack:
+      # - npm update                # Node.js
+      # - pip install -U -r requirements.txt  # Python
+      # - cargo update              # Rust
+      # - go get -u ./...           # Go
+      # - bundle update             # Ruby
+      # - composer update           # PHP
+      - echo "[OK] Dependencies updated"
+
+  deps:outdated:
+    desc: Check for outdated dependencies
+    cmds:
+      # Uncomment based on your stack:
+      # - npm outdated              # Node.js
+      # - pip list --outdated       # Python
+      # - cargo outdated            # Rust (requires cargo-outdated)
+      # - go list -u -m all         # Go
+      # - bundle outdated           # Ruby
+      # - composer outdated         # PHP
+      - echo "Add 'deps:outdated' command for your project"
+
+  deps:audit:
+    desc: Audit dependencies for security vulnerabilities
+    cmds:
+      - echo "Auditing dependencies..."
+      # Uncomment based on your stack:
+      # - npm audit                 # Node.js
+      # - pip-audit                 # Python
+      # - cargo audit               # Rust (requires cargo-audit)
+      # - go list -json -deps ./... | nancy sleuth  # Go (requires nancy)
+      - echo "[OK] Audit complete"
+
+  # ============================================================================
+  # Git Helpers
+  # ============================================================================
+  git:hooks:
+    desc: Install git hooks (husky, pre-commit, etc.)
+    cmds:
+      # Uncomment based on your setup:
+      # - npx husky install         # Node.js (Husky)
+      # - pre-commit install        # Python (pre-commit)
+      - echo "Add 'git:hooks' command for your project"
+
+  # ============================================================================
+  # Docker (if applicable)
+  # ============================================================================
+  docker:build:
+    desc: Build Docker image
+    cmds:
+      - docker build -t {{.PROJECT_NAME}}:latest .
+      - echo "[OK] Docker image built"
+
+  docker:run:
+    desc: Run Docker container
+    cmds:
+      - docker run -p 3000:3000 {{.PROJECT_NAME}}:latest
+
+  docker:up:
+    desc: Start Docker Compose services
+    cmds:
+      - docker-compose up -d
+      - echo "[OK] Services started"
+
+  docker:down:
+    desc: Stop Docker Compose services
+    cmds:
+      - docker-compose down
+      - echo "[OK] Services stopped"
+
+  docker:logs:
+    desc: View Docker Compose logs
+    cmds:
+      - docker-compose logs -f
+
+  # ============================================================================
+  # Release & Deployment
+  # ============================================================================
+  release:
+    desc: Create a new release (tag, build, publish)
+    cmds:
+      - echo "Creating release..."
+      # Add your release process here
+      - echo "[WARN] Add 'release' command for your project"
+
+  deploy:
+    desc: Deploy to production
+    cmds:
+      - echo "Deploying to production..."
+      # Add your deployment process here
+      - echo "[WARN] Add 'deploy' command for your project"
+
+  # ============================================================================
+  # Utilities
+  # ============================================================================
+  version:
+    desc: Show project version
+    cmds:
+      # Uncomment based on your stack:
+      # - npm version               # Node.js
+      # - python -c "import {{.PROJECT_NAME}}; print({{.PROJECT_NAME}}.__version__)"  # Python
+      # - cargo pkgid | cut -d# -f2 # Rust
+      # - go version -m ./bin/app   # Go
+      - echo "Add 'version' command for your project"
+
+  help:
+    desc: Show detailed help for all tasks
+    cmds:
+      - task --list-all
+    silent: true

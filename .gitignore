@@ -1,0 +1,413 @@
+# ==============================================================================
+# Comprehensive Language-Agnostic .gitignore
+#
+# This file covers common patterns across multiple languages, tools, and
+# operating systems. Remove or add sections as needed for your project.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Version Control
+# ------------------------------------------------------------------------------
+.git/
+.gitattributes
+
+# ------------------------------------------------------------------------------
+# Operating Systems
+# ------------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+__MACOSX
+Icon
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+.fuse_hidden*
+.Trash-*
+.nfs*
+
+# ------------------------------------------------------------------------------
+# IDEs & Editors
+# ------------------------------------------------------------------------------
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains (IntelliJ, PyCharm, WebStorm, RustRover, CLion, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+
+# ------------------------------------------------------------------------------
+# Environment & Secrets (NEVER COMMIT THESE)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+.env*.local
+*.env.local
+!**/.env.example
+!**/.env.ci
+!**/.env.test
+*secret*
+credentials*
+*.key
+*.pem
+private.key
+.aws/
+.gcloud/
+
+# ------------------------------------------------------------------------------
+# Logs & Temporary Files
+# ------------------------------------------------------------------------------
+*.log
+*.logs
+server.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.bak
+*.bk
+*.tmp
+*.temp
+*.old
+*.orig
+*.patch
+*.rej
+temp/
+tmp/
+
+# ------------------------------------------------------------------------------
+# Build & Output Directories (Common across languages)
+# ------------------------------------------------------------------------------
+dist/
+build/
+out/
+bin/
+target/
+debug/
+release/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+
+# ------------------------------------------------------------------------------
+# Language-Specific
+# ------------------------------------------------------------------------------
+
+# JavaScript / TypeScript / Node.js
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+.next/
+.output/
+.svelte-kit/
+.nuxt/
+*.tsbuildinfo
+.vite/
+.parcel-cache/
+.eslintcache
+.biome-cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+*.mo
+*.pot
+instance/
+.webassets-cache
+
+# Rust / Cargo
+Cargo.lock
+**/*.rs.bk
+**/*.rs.swp
+**/*.rs.swo
+*.pdb
+**/mutants.out*/
+
+# Go
+*.exe
+*.exe~
+*.test
+*.out
+go.work
+vendor/
+
+# Java / JVM
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.classpath
+.project
+.settings/
+.mvn/
+mvn.cmd
+.mvn.jar
+
+# Ruby
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+.bundle/
+vendor/bundle
+.byebug_history
+
+# PHP
+/vendor/
+composer.lock
+composer.phar
+
+# C / C++
+*.o
+*.ko
+*.obj
+*.elf
+*.ilk
+*.map
+*.exp
+*.gch
+*.pch
+*.lib
+*.a
+*.la
+*.lo
+*.dll
+*.so
+*.so.*
+*.dylib
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# .NET / C#
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+.vs/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+*.nupkg
+*.snupkg
+
+# Swift
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+.build/
+DerivedData/
+
+# Dart / Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# ------------------------------------------------------------------------------
+# Databases
+# ------------------------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+data/
+db/
+dump.rdb
+.localdb/
+
+# ------------------------------------------------------------------------------
+# Testing & Coverage
+# ------------------------------------------------------------------------------
+coverage/
+.nyc_output/
+lcov-report/
+*.lcov
+/tests/e2e/playwright-report/
+/test-results/
+/cypress/videos/
+/cypress/screenshots/
+.jest-cache/
+.vitest-cache/
+*.cover
+htmlcov/
+.coverage
+.pytest_cache/
+.tox/
+junit.xml
+test-output/
+
+# ------------------------------------------------------------------------------
+# Documentation Build Output
+# ------------------------------------------------------------------------------
+docs/_build/
+site/
+_site/
+book/
+doc/
+
+# ------------------------------------------------------------------------------
+# Infrastructure & DevOps
+# ------------------------------------------------------------------------------
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Serverless Framework
+.serverless/
+
+# Docker
+docker-compose.override.yml
+
+# Kubernetes
+*.kubeconfig
+
+# ------------------------------------------------------------------------------
+# Package Manager Lock Files
+# Uncomment the ones for package managers you are NOT using
+# ------------------------------------------------------------------------------
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+# Cargo.lock
+# Gemfile.lock
+# composer.lock
+# Pipfile.lock
+# poetry.lock
+
+# ------------------------------------------------------------------------------
+# Archives
+# ------------------------------------------------------------------------------
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+*.bz2
+*.xz
+
+# ------------------------------------------------------------------------------
+# Media & Assets (usually not committed, but depends on project)
+# ------------------------------------------------------------------------------
+# uploads/
+# media/
+# assets/videos/
+# *.mp4
+# *.avi
+
+# ------------------------------------------------------------------------------
+# Miscellaneous
+# ------------------------------------------------------------------------------
+.cache/
+.storybook-cache/
+*storybook.log
+storybook-static/
+.vercel/
+.netlify/

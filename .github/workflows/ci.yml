@@ -1,0 +1,163 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs on the same branch when a new push arrives
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # Format
+  # Verify code is formatted correctly. Fail fast -- no point running other
+  # checks if the code isn't even formatted.
+  # ----------------------------------------------------------------------------
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      # Uncomment the setup step for your language:
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: '22', cache: 'npm' }
+      # - uses: actions/setup-python@v5
+      #   with: { python-version: '3.12' }
+      # - uses: actions-rust-lang/setup-rust-toolchain@v1
+      # - uses: actions/setup-go@v5
+      #   with: { go-version: '1.23' }
+
+      - name: Install dependencies
+        run: task setup
+
+      - name: Check formatting
+        run: task format:check
+
+  # ----------------------------------------------------------------------------
+  # Lint
+  # Static analysis and style enforcement.
+  # ----------------------------------------------------------------------------
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: task setup
+
+      - name: Run linter
+        run: task lint
+
+  # ----------------------------------------------------------------------------
+  # Type Check
+  # Verify type correctness (for typed languages).
+  # Remove this job if your language doesn't have a type checker.
+  # ----------------------------------------------------------------------------
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: task setup
+
+      - name: Run type checker
+        run: task type-check
+
+  # ----------------------------------------------------------------------------
+  # Test
+  # Run the full test suite. Split into unit/integration/e2e if they have
+  # meaningfully different setup requirements or runtimes.
+  # ----------------------------------------------------------------------------
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: task setup
+
+      - name: Run tests
+        run: task test
+
+      - name: Upload coverage
+        # Uncomment and configure for your coverage service:
+        # uses: codecov/codecov-action@v4
+        # with:
+        #   token: ${{ secrets.CODECOV_TOKEN }}
+        run: echo "Configure coverage upload for your project"
+
+  # ----------------------------------------------------------------------------
+  # Build
+  # Verify the project builds cleanly.
+  # Remove this job if your project has no build step.
+  # ----------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: task setup
+
+      - name: Build
+        run: task build
+
+  # ----------------------------------------------------------------------------
+  # Security
+  # Audit dependencies for known vulnerabilities.
+  # ----------------------------------------------------------------------------
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: task setup
+
+      - name: Audit dependencies
+        run: task deps:audit
+
+  # ----------------------------------------------------------------------------
+  # All Checks
+  # A single job that requires all others to pass. Use this as the required
+  # status check in branch protection rules -- that way you only need to update
+  # one rule when you add or remove jobs above.
+  # ----------------------------------------------------------------------------
+  all-checks:
+    name: All Checks
+    runs-on: ubuntu-latest
+    needs: [format, lint, type-check, test, build, security]
+    if: always()
+    steps:
+      - name: Verify all jobs passed
+        run: |
+          results='${{ toJSON(needs) }}'
+          if echo "$results" | grep -q '"result":"failure"'; then
+            echo "One or more jobs failed."
+            exit 1
+          fi
+          if echo "$results" | grep -q '"result":"cancelled"'; then
+            echo "One or more jobs were cancelled."
+            exit 1
+          fi
+          echo "All checks passed."

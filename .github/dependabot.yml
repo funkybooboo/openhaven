@@ -1,0 +1,107 @@
+version: 2
+
+updates:
+  # ----------------------------------------------------------------------------
+  # GitHub Actions
+  # Keep workflow action versions up to date automatically.
+  # ----------------------------------------------------------------------------
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: UTC
+    commit-message:
+      prefix: "chore(deps)"
+    labels:
+      - dependencies
+    # Group all action updates into a single PR to reduce noise.
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # ----------------------------------------------------------------------------
+  # npm (Node / Bun / Deno)
+  # Uncomment if your project uses a package.json.
+  # ----------------------------------------------------------------------------
+  # - package-ecosystem: npm
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #     time: "09:00"
+  #     timezone: UTC
+  #   commit-message:
+  #     prefix: "chore(deps)"
+  #   labels:
+  #     - dependencies
+  #   groups:
+  #     npm-dependencies:
+  #       patterns:
+  #         - "*"
+
+  # ----------------------------------------------------------------------------
+  # pip (Python)
+  # Uncomment if your project uses requirements.txt or pyproject.toml.
+  # ----------------------------------------------------------------------------
+  # - package-ecosystem: pip
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #     time: "09:00"
+  #     timezone: UTC
+  #   commit-message:
+  #     prefix: "chore(deps)"
+  #   labels:
+  #     - dependencies
+
+  # ----------------------------------------------------------------------------
+  # Cargo (Rust)
+  # Uncomment if your project uses Cargo.toml.
+  # ----------------------------------------------------------------------------
+  # - package-ecosystem: cargo
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #     time: "09:00"
+  #     timezone: UTC
+  #   commit-message:
+  #     prefix: "chore(deps)"
+  #   labels:
+  #     - dependencies
+
+  # ----------------------------------------------------------------------------
+  # Go modules
+  # Uncomment if your project uses go.mod.
+  # ----------------------------------------------------------------------------
+  # - package-ecosystem: gomod
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #     time: "09:00"
+  #     timezone: UTC
+  #   commit-message:
+  #     prefix: "chore(deps)"
+  #   labels:
+  #     - dependencies
+
+  # ----------------------------------------------------------------------------
+  # Docker
+  # Uncomment if your project uses a Dockerfile.
+  # ----------------------------------------------------------------------------
+  # - package-ecosystem: docker
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #     time: "09:00"
+  #     timezone: UTC
+  #   commit-message:
+  #     prefix: "chore(deps)"
+  #   labels:
+  #     - dependencies
